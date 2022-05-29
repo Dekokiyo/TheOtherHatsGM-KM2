@@ -25,7 +25,7 @@ def cleanString(string):
 
 def hatsToJson(filename):
   wb = load_workbook(filename, read_only = True)
-
+  
   hatData = {"hats": []}
   for s in wb:
     rows = s.iter_rows(min_col = 1, min_row = 2, max_col = 10, max_row = None)
@@ -34,7 +34,7 @@ def hatsToJson(filename):
       if header.value:
         headers.append(header.value)
         print(header.value)
-
+    
     for row in rows:
       name        = cleanString(row[0].value)
       author      = cleanString(row[1].value)
@@ -44,12 +44,12 @@ def hatsToJson(filename):
       climbres    = cleanString(row[5].value)
       flipres     = cleanString(row[6].value)
       backflipres = cleanString(row[7].value)
-
+      
       if not name or not res:
         continue
-
+      
       options = set(os.path.splitext(res)[0].lower().split("_"))
-
+      
       data = {
         "name": name,
         "author": author,
@@ -58,36 +58,36 @@ def hatsToJson(filename):
         "resource": res,
         "reshasha": md5(res),
       }
-
+      
       if backres:
         data["backresource"] = backres
         data["reshashb"] = md5(backres)
         options.update(os.path.splitext(backres)[0].lower().split("_"))
-
+        
       if climbres:
         data["climbresource"] = climbres
         data["reshashc"] = md5(climbres)
         options.update(os.path.splitext(climbres)[0].lower().split("_"))
-
+        
       if flipres:
         data["flipresource"] = flipres
         data["reshashf"] = md5(flipres)
         options.update(os.path.splitext(flipres)[0].lower().split("_"))
-
+        
       if backflipres:
         data["backflipresource"] = backflipres
         data["reshashbf"] = md5(backflipres)
         options.update(os.path.splitext(backflipres)[0].lower().split("_"))
-
+      
       if "bounce" in options: data["bounce"] = True
       if "adaptive" in options: data["adaptive"] = True
       if "behind" in options: data["behind"] = True
-
+      
       if data:
         hatData["hats"].append(data)
-
+  
   hatData["hats"].sort(key = lambda x: x["name"])
-
+  
   with open(OUT_FILE, "w") as f:
     json.dump(hatData, f, indent=4)
 
